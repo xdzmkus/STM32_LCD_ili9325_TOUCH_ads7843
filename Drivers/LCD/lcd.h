@@ -152,7 +152,7 @@ void     LCD_DrawCircle(uint16_t Xpos, uint16_t Ypos, uint16_t Radius);
 void     LCD_DrawPolygon(pPoint Points, uint16_t PointCount);
 void     LCD_DrawEllipse(int Xpos, int Ypos, int XRadius, int YRadius);
 void     LCD_DrawBitmap(uint16_t Xpos, uint16_t Ypos, uint8_t *pbmp);
-void     LCD_DrawRGBImage(uint16_t Xpos, uint16_t Ypos, uint16_t Xsize, uint16_t Ysize, uint8_t *pbmp);
+void     LCD_DrawRGBImage(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint16_t Height, uint16_t *pbmp);
 
 void     LCD_FillRect(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint16_t Height);
 void     LCD_FillCircle(uint16_t Xpos, uint16_t Ypos, uint16_t Radius);

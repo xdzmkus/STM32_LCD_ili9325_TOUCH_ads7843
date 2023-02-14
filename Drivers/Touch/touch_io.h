@@ -19,7 +19,7 @@ extern "C" {
 void TOUCH_INT_Enable();
 void TOUCH_INT_Disable();
 
-bool TOUCH_PEN_active();
+bool TOUCH_PEN_GetState();
 
 void TOUCH_IO_Init(void);
 

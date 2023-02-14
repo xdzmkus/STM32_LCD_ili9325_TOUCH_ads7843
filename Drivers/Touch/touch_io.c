@@ -3,8 +3,9 @@
  *
  */
 
-#include "stm32f1xx.h"
 #include "touch_io.h"
+
+#include "stm32f1xx.h"
 
 #define BITBAND(addr, bitnum) ((addr & 0xF0000000)+0x2000000+((addr &0xFFFFF)<<5)+(bitnum<<2))
 #define MEM_ADDR(addr)  *((volatile unsigned long  *)(addr))
@@ -55,9 +56,6 @@
 #define TCLK PAout(5)  //PA5  SCLK
 #define TCS  PAout(4)  //PA4  CS
 
-#define TP_INT_Pin GPIO_PIN_13
-#define TP_INT_GPIO_Port GPIOC
-#define TP_INT_EXTI_IRQn EXTI15_10_IRQn
 #define TP_CS_Pin GPIO_PIN_4
 #define TP_CS_GPIO_Port GPIOA
 #define TP_SCLK_Pin GPIO_PIN_5
@@ -77,9 +75,9 @@ void TOUCH_INT_Disable()
 	CLEAR_BIT(EXTI->IMR, EXTI_IMR_IM13);
 }
 
-bool TOUCH_PEN_active()
+bool TOUCH_PEN_GetState()
 {
-	return !(READ_BIT(GPIOC->IDR, GPIO_IDR_IDR13));
+	return READ_BIT(GPIOC->IDR, GPIO_IDR_IDR13); // PEN
 }
 
 /**
@@ -95,12 +93,6 @@ void TOUCH_IO_Init(void)
 	  /*Configure GPIO pin Output Level */
 	  HAL_GPIO_WritePin(GPIOA, TP_SCLK_Pin|TP_MOSI_Pin, GPIO_PIN_RESET);
 
-	  /*Configure GPIO pin : TP_INT_Pin */
-	  GPIO_InitStruct.Pin = TP_INT_Pin;
-	  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-	  GPIO_InitStruct.Pull = GPIO_PULLUP;
-	  HAL_GPIO_Init(TP_INT_GPIO_Port, &GPIO_InitStruct);
-
 	  /*Configure GPIO pins : TP_CS_Pin TP_SCLK_Pin TP_MOSI_Pin */
 	  GPIO_InitStruct.Pin = TP_CS_Pin|TP_SCLK_Pin|TP_MOSI_Pin;
 	  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -113,10 +105,6 @@ void TOUCH_IO_Init(void)
 	  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	  GPIO_InitStruct.Pull = GPIO_PULLUP;
 	  HAL_GPIO_Init(TP_MISO_GPIO_Port, &GPIO_InitStruct);
-
-	  /* EXTI interrupt init*/
-	  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
-	  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 }
 
 uint16_t TOUCH_IO_Read(uint8_t CMD)

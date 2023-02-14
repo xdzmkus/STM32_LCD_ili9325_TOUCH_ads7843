@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <algorithm>
 
-extern uint8_t gImage_11[];
+extern uint8_t stm32_mini_map[];
 
 uint16_t lcd_colors[] =
 {
@@ -44,11 +44,13 @@ LCD_COLOR_BLACK,
 LCD_COLOR_BROWN,
 LCD_COLOR_ORANGE };
 
+volatile bool isTouched = false;
+
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	if (GPIO_Pin == TP_INT_Pin)
 	{
-		Touch_callback();
+		isTouched = Touch_isTouched();
 	}
 }
 
@@ -283,7 +285,7 @@ void demoImage()
 	{
 		LCD_SetRotation(r);
 
-		LCD_DrawRGBImage(5, 5, 99, 97, gImage_11);
+		LCD_DrawRGBImage(0, 0, 240, 180, (uint16_t*)stm32_mini_map);
 
 		HAL_Delay(1000);
 	}
@@ -329,7 +331,7 @@ void demoTouch()
 
 void appMain()
 {
-	//  Touch_Init();
+	Touch_Init();
 
 	if (LCD_Init() == LCD_ERROR)
 	{

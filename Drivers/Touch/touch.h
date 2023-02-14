@@ -8,13 +8,13 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-void Touch_callback();
-
 void Touch_Init(void);
 
 void Touch_SetRotation(uint8_t rotation);
 
 bool Touch_GetPoint(uint16_t *x, uint16_t *y);
+
+bool Touch_isTouched();
 
 #ifdef __cplusplus
 }

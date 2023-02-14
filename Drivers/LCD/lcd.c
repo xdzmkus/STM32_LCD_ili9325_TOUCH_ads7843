@@ -683,11 +683,11 @@ void LCD_DrawBitmap(uint16_t Xpos, uint16_t Ypos, uint8_t *pbmp)
  * @param  Ysize: Y size in the LCD
  * @param  pdata: Pointer to the RGB Image address.
  */
-void LCD_DrawRGBImage(uint16_t Xpos, uint16_t Ypos, uint16_t Xsize, uint16_t Ysize, uint8_t *pdata)
+void LCD_DrawRGBImage(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint16_t Height, uint16_t *pdata)
 {
-	LCD_SetDisplayWindow(Xpos, Ypos, Xsize, Ysize);
+	LCD_SetDisplayWindow(Xpos, Ypos, Width, Height);
 
-	lcd_drv->DrawRGBImage(Xpos, Ypos, (uint16_t*)pdata, Xsize * Ysize);
+	lcd_drv->DrawRGBImage(Xpos, Ypos, pdata, Width * Height);
 
 	LCD_SetDisplayWindow(0, 0, LCD_GetWidth(), LCD_GetHeight());
 }

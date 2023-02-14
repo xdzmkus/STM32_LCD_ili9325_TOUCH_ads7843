@@ -56,6 +56,35 @@
 #define LCD_WR  PCout(10)
 #define LCD_RD	PCout(11)
 
+void _LCD_IO_Config_DATA_Input()
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	GPIO_InitStructure.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7;
+  	GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
+  	GPIO_InitStructure.Pull = GPIO_PULLUP;
+  	HAL_GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+  	GPIO_InitStructure.Pin = GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15;
+  	GPIO_InitStructure.Mode = GPIO_MODE_INPUT;
+  	GPIO_InitStructure.Pull = GPIO_PULLUP;
+  	HAL_GPIO_Init(GPIOB, &GPIO_InitStructure);
+}
+
+void _LCD_IO_Config_DATA_Output()
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+
+	GPIO_InitStructure.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7;
+  	GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
+  	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
+  	HAL_GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+  	GPIO_InitStructure.Pin = GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15;
+  	GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
+  	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
+  	HAL_GPIO_Init(GPIOB, &GPIO_InitStructure);
+}
 
 /**
   * @brief  Configures the LCD_SPI interface.
@@ -64,15 +93,12 @@ void LCD_IO_Init(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 
-	GPIO_InitStructure.Pin = GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | GPIO_PIN_12 | GPIO_PIN_13 | GPIO_PIN_14 | GPIO_PIN_15;
-  	GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
-  	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
-  	HAL_GPIO_Init(GPIOB, &GPIO_InitStructure);
-
-	GPIO_InitStructure.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 | GPIO_PIN_4 | GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11;
+	GPIO_InitStructure.Pin = GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11;
   	GPIO_InitStructure.Mode = GPIO_MODE_OUTPUT_PP;
   	GPIO_InitStructure.Speed = GPIO_SPEED_FREQ_HIGH;
   	HAL_GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+  	_LCD_IO_Config_DATA_Output();
 }
 
 //========================================================================
@@ -100,11 +126,13 @@ uint16_t LCD_IO_ReadReg(uint8_t Reg)
 	// read data
 	uint16_t readvalue = 0;
 	LCD_RD = 0;
-	GPIOB->CRH = (GPIOB->CRH & 0x00000000) | 0x44444444;
-	GPIOC->CRL = (GPIOC->CRL & 0x00000000) | 0x44444444;
+
+	_LCD_IO_Config_DATA_Input();
+
 	readvalue = ((GPIOB->IDR&0xff00)|(GPIOC->IDR&0x00ff));
-	GPIOB->CRH = (GPIOB->CRH & 0x00000000) | 0x33333333;
-	GPIOC->CRL = (GPIOC->CRL & 0x00000000) | 0x33333333;
+
+	_LCD_IO_Config_DATA_Output();
+
 	LCD_RD = 1;
 
 	LCD_CS = 1;

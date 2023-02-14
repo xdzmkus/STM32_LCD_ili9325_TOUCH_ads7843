@@ -1,11 +1,11 @@
-/* Includes ------------------------------------------------------------------*/
+#include "touch.h"
 #include "touch_io.h"
 
 #include "stm32f1xx.h"
 
 #include <math.h>
 #include <stdlib.h>
-#include <touch.h>
+
 
 #define READ_TIMES  15
 #define SKIP_VALUES 5
@@ -18,8 +18,6 @@
 
 #define WIDTH  240
 #define HEIGHT 320
-
-volatile bool touched = false;
 
 static uint8_t touch_rotation = 0;
 
@@ -55,12 +53,6 @@ float _constrain(float value, float value_min, float value_max)
       }
 }
 
-void Touch_callback()
-{
-	if (TOUCH_PEN_active())
-		touched = true;
-}
-
 void Touch_Init(void)
 {
 	TOUCH_IO_Init();
@@ -79,7 +71,7 @@ bool Touch_GetPoint(uint16_t *x, uint16_t *y)
 	uint8_t reads = 0;
 
 	// read several touch points
-	while(reads < READ_TIMES && TOUCH_PEN_active())
+	while(reads < READ_TIMES && !TOUCH_PEN_GetState())
 	{
 		xValues[reads] = TOUCH_IO_Read(CMD_RDX);
 		yValues[reads] = TOUCH_IO_Read(CMD_RDY);
@@ -133,5 +125,10 @@ bool Touch_GetPoint(uint16_t *x, uint16_t *y)
 	}
 
 	return true;
+}
+
+bool Touch_isTouched()
+{
+	return !TOUCH_PEN_GetState();
 }
 
